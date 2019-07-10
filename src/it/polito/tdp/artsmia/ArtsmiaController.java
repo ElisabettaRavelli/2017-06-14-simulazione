@@ -6,6 +6,8 @@ package it.polito.tdp.artsmia;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import it.polito.tdp.artsmia.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
@@ -13,6 +15,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 public class ArtsmiaController {
+	
+	private Model model;
 
     @FXML // ResourceBundle that was given to the FXMLLoader
     private ResourceBundle resources;
@@ -21,7 +25,7 @@ public class ArtsmiaController {
     private URL location;
 
     @FXML // fx:id="boxAnno"
-    private ChoiceBox<?> boxAnno; // Value injected by FXMLLoader
+    private ChoiceBox<Integer> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtFieldStudenti"
     private TextField txtFieldStudenti; // Value injected by FXMLLoader
@@ -31,7 +35,16 @@ public class ArtsmiaController {
 
     @FXML
     void handleCreaGrafo(ActionEvent event) {
-
+    	Integer anno = boxAnno.getValue();
+    	if(anno==null) {
+    		txtResult.appendText("Si deve selezionare un anno\n");
+    	}
+    	txtResult.clear();
+    	this.model.creaGrafo(anno);
+    	txtResult.appendText("Grafo creato con " + this.model.getVertici()+ " vertici e "+ this.model.getArchi()+" archi\n");
+    	txtResult.appendText("Grafo fortemente connesso? " + model.calcolaCC() + "\n");
+    	txtResult.appendText("Quale tra le mostre selezionate ha il maggior numero di opere d’arte in esposizione?\n");
+    	txtResult.appendText(this.model.mostraMaxOpere().toString()+ "\n");
     }
 
     @FXML
@@ -45,5 +58,10 @@ public class ArtsmiaController {
         assert txtFieldStudenti != null : "fx:id=\"txtFieldStudenti\" was not injected: check your FXML file 'Artsmia.fxml'.";
         assert txtResult != null : "fx:id=\"txtResult\" was not injected: check your FXML file 'Artsmia.fxml'.";
 
+    }
+    
+    public void setModel(Model model) {
+    	this.model = model;
+    	boxAnno.getItems().addAll(this.model.getAllAnni());
     }
 }
